@@ -3,19 +3,13 @@ import {
   CATEGORY_DATA,
   CURRENCIES,
   PRODUCTS_DATA_BY_CATEGORY,
-  PRODUCTS_DATA_BY_ID,
 } from "./queries";
+
 export const fetchProductsByCategory = async (category) => {
   return client.query({
     query: PRODUCTS_DATA_BY_CATEGORY,
-    variables: { title: category },
-  });
-};
-
-export const fetchProductsById = async (id) => {
-  return client.query({
-    query: PRODUCTS_DATA_BY_ID,
-    variables: { id },
+    variables: { title: "all" },
+    //category },
   });
 };
 

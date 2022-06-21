@@ -29,7 +29,10 @@ export const PRODUCTS_DATA_BY_CATEGORY = gql`
         }
         id
         prices {
-          currency
+          currency {
+            label
+            symbol
+          }
           amount
         }
       }
@@ -39,33 +42,9 @@ export const PRODUCTS_DATA_BY_CATEGORY = gql`
 
 export const CURRENCIES = gql`
   query FetchCurrencies {
-    currencies
-  }
-`;
-
-export const PRODUCTS_DATA_BY_ID = gql`
-  query FetchProductById($id: id) {
-    product(id: $id) {
-      id
-      name
-      inStock
-      brand
-      gallery
-      description
-      attributes {
-        name
-        id
-        type
-        items {
-          id
-          value
-          displayValue
-        }
-      }
-      prices {
-        currency
-        amount
-      }
+    currencies {
+      label
+      symbol
     }
   }
 `;

@@ -9,13 +9,32 @@ export const ProductDetailsContainer = styled.main`
 
 export const LeftColumn = styled.div`
   width: 65%;
+  display: flex;
+  flex-direction: row;
 `;
 
 export const ProductMainImage = styled.div`
   margin-top: 50px;
   img {
-    width: 610px;
+    width: auto;
     height: 511px;
+    object-fit: contain;
+    &:active {
+      opacity: 1;
+    }
+  }
+`;
+
+export const ProductSideImages = styled.div`
+  margin-top: 50px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  img {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
     &:active {
       opacity: 1;
     }
