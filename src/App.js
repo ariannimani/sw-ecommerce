@@ -4,12 +4,13 @@ import Navigation from "./routes/navigation/navigation.component";
 import "./App.styles.jsx";
 import ProductDetails from "./routes/product-details/product-details.component";
 import CartItems from "./routes/cart-items/cart-items.component";
-import { Body, Container } from "./App.styles.jsx";
+import { Body, Container, ContainerBody } from "./App.styles.jsx";
 import { Switch, Route } from "react-router-dom";
 import {
   fetchCategories,
   fetchCurrency,
   fetchProductsByCategory,
+  fetchProductsById,
 } from "./graphql/fetchData";
 
 class App extends Component {
@@ -30,6 +31,19 @@ class App extends Component {
       checkOutData: [],
     };
   }
+
+  handleCartClick = () => {
+    this.setState((state) => {
+      return {
+        isCartOpen: !state.isCartOpen,
+      };
+    });
+  };
+  handleCartClickOutside = () => {
+    this.setState({
+      isCartOpen: false,
+    });
+  };
 
   dataByCategory = () => {
     this.state.selectedCategory === "all"
@@ -67,12 +81,17 @@ class App extends Component {
 
   addCartItem = (cart, productToAdd, sAttributes) => {
     const existingCartItem = cart.find(
-      (cartItem) => cartItem.id === productToAdd.id
+      (cartItem) =>
+        cartItem.id === productToAdd.id &&
+        JSON.stringify(cartItem.selectedAttributes.map((at) => at.value)) ===
+          JSON.stringify(sAttributes.map((at) => at.value))
     );
 
     if (existingCartItem) {
       return cart.map((cartItem) =>
-        cartItem.id === productToAdd.id
+        cartItem.id === productToAdd.id &&
+        JSON.stringify(cartItem.selectedAttributes.map((at) => at.value)) ===
+          JSON.stringify(sAttributes.map((at) => at.value))
           ? {
               ...cartItem,
               quantity: cartItem.quantity + 1,
@@ -88,63 +107,35 @@ class App extends Component {
     ];
   };
 
-  updateCartItem = (cart, product, selectedAttribute, newAttributes) => {
-    const existingCartItem = cart.find(
-      (cartItem) => cartItem.id === product.id
+  removeCartItem = (cartItems, cartItemToRemove, sAttributes) => {
+    const existingCartItem = cartItems.find(
+      (cartItem) =>
+        cartItem.id === cartItemToRemove &&
+        JSON.stringify(cartItem.selectedAttributes.map((at) => at.value)) ===
+          JSON.stringify(sAttributes.map((at) => at.value))
     );
 
-    const existingAttribute = existingCartItem.selectedAttributes.find(
-      (attribute) =>
-        attribute.type ===
-        this.state.selectedAttributes.map((newAttr) => newAttr.type).toString()
-    );
-    const thisCart = cart.filter((cartItem) => cartItem.id !== product.id);
+    const existingAttribute =
+      JSON.stringify(
+        existingCartItem.selectedAttributes.map((at) => at.value)
+      ) === JSON.stringify(sAttributes.map((at) => at.value));
 
-    const thisAttribute = existingCartItem.selectedAttributes.filter(
-      (attribute) =>
-        attribute.type !==
-        selectedAttribute.map((newAttr) => newAttr.type).toString()
-    );
-
-    if (existingCartItem && existingAttribute) {
-      return cart.map((cartItem) =>
-        cartItem.id === product.id
-          ? {
-              ...cartItem,
-              selectedAttributes: [...thisAttribute, selectedAttribute[0]],
-            }
-          : cartItem
+    if (existingCartItem.quantity === 1 && existingAttribute) {
+      return cartItems.filter(
+        (cartItem) =>
+          cartItem.id !== cartItemToRemove ||
+          (cartItem.id === cartItemToRemove &&
+            JSON.stringify(
+              cartItem.selectedAttributes.map((at) => at.value)
+            ) !== JSON.stringify(sAttributes.map((at) => at.value)))
       );
     }
 
-    return [
-      ...thisCart,
-      {
-        ...product,
-        selectedAttributes: { ...thisAttribute, selectedAttribute },
-      },
-    ];
-  };
-  updateItemToCart = (product, sAttributes) => {
-    this.setState({
-      cartItems: this.updateCartItem(
-        this.state.cartItems,
-        product,
-        sAttributes
-      ),
-    });
-    this.emptyAttributes();
-  };
-
-  removeCartItem = (cartItems, cartItemToRemove) => {
-    const existingCartItem = cartItems.find(
-      (cartItem) => cartItem.id === cartItemToRemove
-    );
-    if (existingCartItem.quantity === 1) {
-      return cartItems.filter((cartItem) => cartItem.id !== cartItemToRemove);
-    }
     return cartItems.map((cartItem) =>
-      cartItem.id === cartItemToRemove
+      cartItem.id === cartItemToRemove &&
+      existingCartItem &&
+      JSON.stringify(cartItem.selectedAttributes.map((at) => at.value)) ===
+        JSON.stringify(sAttributes.map((at) => at.value))
         ? { ...cartItem, quantity: cartItem.quantity - 1 }
         : cartItem
     );
@@ -157,14 +148,13 @@ class App extends Component {
     this.emptyAttributes();
   };
 
-  updateCart = async (attribute, attr, itemid, item) => {
-    await this.selectedAttributesHandler(attribute, attr, itemid);
-    this.updateItemToCart(item, this.state.selectedAttributes);
-  };
-
-  removeItemFromCart = (cartItemToRemove) =>
+  removeItemFromCart = (cartItemToRemove, sAttributes) =>
     this.setState({
-      cartItems: this.removeCartItem(this.state.cartItems, cartItemToRemove),
+      cartItems: this.removeCartItem(
+        this.state.cartItems,
+        cartItemToRemove,
+        sAttributes
+      ),
     });
 
   selectAttribute = (attribute, newAttribute, type, id) => {
@@ -183,8 +173,8 @@ class App extends Component {
     return [...attribute, { value: newAttribute, type, id }];
   };
 
-  selectedAttributesHandler = (newAttribute, type, id) => {
-    this.setState({
+  selectedAttributesHandler = async (newAttribute, type, id) => {
+    await this.setState({
       ...this.state,
       selectedAttributes: this.selectAttribute(
         this.state.selectedAttributes,
@@ -207,40 +197,57 @@ class App extends Component {
     }
   };
 
+  fetchProductsByIdDetails = (id) => {
+    fetchProductsById(id).then((results) => {
+      this.setState({
+        productsData: results.data.product,
+      });
+    });
+  };
+
   emptyAttributes = () => {
     this.setState({ selectedAttributes: [] });
   };
+
   componentDidMount() {
     fetchCategories.apply().then((results) => {
       this.setState({
         categoriesData: results.data.categories,
       });
     });
-    fetchProductsByCategory.apply().then((results) => {
-      this.setState({
-        productsData: results.data.category.products,
-      });
-    });
+
     fetchCurrency.apply().then((results) => {
       this.setState({
         currencyData: results.data.currencies,
       });
     });
+
     this.scrollToTop();
+    this.fetchProductByCat();
+    this.emptyAttributes();
   }
   componentDidUpdate() {
     if (this.state.cartTotal !== this.cartTotalHandler(this.state.cartItems)) {
       this.setState({ cartTotal: this.cartTotalHandler(this.state.cartItems) });
     }
+    if (this.state.isCartOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "visible";
+    }
   }
 
-  isCartOpenHandler = () => {
-    this.state.isCartOpen
-      ? this.setState({ isCartOpen: false })
-      : this.setState({ isCartOpen: true });
+  fetchProductByCat = () => {
+    fetchProductsByCategory(this.state.selectedCategory).then((results) => {
+      this.setState({
+        productsData: results.data.category.products,
+      });
+    });
   };
-  selectCategoryHandler = (category) => {
-    this.setState({ selectedCategory: category });
+
+  selectCategoryHandler = async (category) => {
+    await this.setState({ selectedCategory: category });
+    this.fetchProductByCat();
   };
 
   changeCurrencyHandler = (currency, symbol) => {
@@ -315,87 +322,80 @@ class App extends Component {
       currencyData,
       selectedCurrency,
       cartItems,
-      selectedId,
       selectedAttributes,
       cartTotal,
     } = this.state;
 
     return (
       <Container>
-        <Body>
-          <Navigation
-            isCartOpen={isCartOpen}
-            categoriesData={categoriesData}
-            selectCategoryHandler={this.selectCategoryHandler}
-            isCartOpenHandler={this.isCartOpenHandler}
-            currencyData={currencyData}
-            changeCurrencyHandler={this.changeCurrencyHandler}
-            selectedCurrency={selectedCurrency}
-            cartItems={cartItems}
-            removeItemFromCart={this.removeItemFromCart}
-            addItemToCart={this.addItemToCart}
-            cartTotal={cartTotal}
-            updateCart={this.updateCart}
-            imageShiftHandler={this.imageShiftHandler}
-            imageIndex={this.imageIndex}
-            checkOut={this.checkOut}
-          />
-          <Switch>
-            <Route exact path="/">
-              <Home
-                selectedCategory={selectedCategory}
-                productsData={productsData}
-                selectedCurrency={selectedCurrency}
-                selectedId={selectedId}
-                selectedAttributes={selectedAttributes}
-                addItemToCart={this.addItemToCart}
-              />
-            </Route>
-            <Route
-              exact
-              path={`/${selectedCategory}/:id`}
-              render={({ match }) => (
-                <ProductDetails
+        <Navigation
+          isCartOpen={isCartOpen}
+          categoriesData={categoriesData}
+          selectCategoryHandler={this.selectCategoryHandler}
+          currencyData={currencyData}
+          changeCurrencyHandler={this.changeCurrencyHandler}
+          selectedCurrency={selectedCurrency}
+          cartItems={cartItems}
+          removeItemFromCart={this.removeItemFromCart}
+          addItemToCart={this.addItemToCart}
+          cartTotal={cartTotal}
+          imageShiftHandler={this.imageShiftHandler}
+          imageIndex={this.imageIndex}
+          checkOut={this.checkOut}
+          handleCartClick={this.handleCartClick}
+          handleCartClickOutside={this.handleCartClickOutside}
+        />
+        <ContainerBody isCartOpen={isCartOpen}>
+          <Body>
+            <Switch>
+              <Route exact path="/">
+                <Home
+                  selectedCategory={selectedCategory}
                   productsData={productsData}
+                  selectedCurrency={selectedCurrency}
                   addItemToCart={this.addItemToCart}
+                  isCartOpen={isCartOpen}
+                />
+              </Route>
+              <Route
+                exact
+                path={`/${selectedCategory}/:id`}
+                render={({ match }) => (
+                  <ProductDetails
+                    addItemToCart={this.addItemToCart}
+                    selectedCurrency={selectedCurrency}
+                    id={match.params.id}
+                    selectedAttributesHandler={this.selectedAttributesHandler}
+                    selectedAttributes={selectedAttributes}
+                    scrollToTop={this.scrollToTop}
+                  />
+                )}
+              />
+              <Route exact path={`/${selectedCategory}`}>
+                <Home
+                  selectedCategory={selectedCategory}
+                  productsData={productsData}
+                  selectedCurrency={selectedCurrency}
+                  addItemToCart={this.addItemToCart}
+                  isCartOpen={isCartOpen}
+                />
+              </Route>
+              <Route exact path="/cart">
+                <CartItems
                   selectedCurrency={selectedCurrency}
                   cartItems={cartItems}
-                  id={match.params.id}
-                  selectedAttributesHandler={this.selectedAttributesHandler}
-                  selectedAttributes={selectedAttributes}
+                  removeItemFromCart={this.removeItemFromCart}
+                  addItemToCart={this.addItemToCart}
+                  cartTotal={cartTotal}
                   scrollToTop={this.scrollToTop}
+                  imageShiftHandler={this.imageShiftHandler}
+                  imageIndex={this.imageIndex}
+                  cleanCart={this.cleanCart}
                 />
-              )}
-            />
-            <Route exact path={`/${selectedCategory}`}>
-              <Home
-                selectedCategory={selectedCategory}
-                productsData={productsData}
-                selectedCurrency={selectedCurrency}
-                selectedAttributes={selectedAttributes}
-                addItemToCart={this.addItemToCart}
-              />
-            </Route>
-            <Route exact path="/cart">
-              <CartItems
-                selectedCurrency={selectedCurrency}
-                cartItems={cartItems}
-                removeItemFromCart={this.removeItemFromCart}
-                addItemToCart={this.addItemToCart}
-                cartTotal={cartTotal}
-                isCartOpen={isCartOpen}
-                selectCategoryHandler={this.selectCategoryHandler}
-                isCartOpenHandler={this.isCartOpenHandler}
-                scrollToTop={this.scrollToTop}
-                updateCart={this.updateCart}
-                selectedAttributes={selectedAttributes}
-                imageShiftHandler={this.imageShiftHandler}
-                imageIndex={this.imageIndex}
-                cleanCart={this.cleanCart}
-              />
-            </Route>
-          </Switch>
-        </Body>
+              </Route>
+            </Switch>
+          </Body>
+        </ContainerBody>
       </Container>
     );
   }

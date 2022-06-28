@@ -16,8 +16,9 @@ import {
   DivCart,
   CartImage,
   CartImageContainer,
-  CartImageAttributes,
+  CartPrice,
   AttributesContainer,
+  CartDropdownBagButtons,
 } from "./cart-dropdown.styles.jsx";
 import AttributeButton from "../buttons/attribute-button/attribute-button.component";
 import {
@@ -32,10 +33,6 @@ class CartDropdown extends Component {
       removeItemFromCart,
       addItemToCart,
       cartTotal,
-      isCartOpenHandler,
-      updateCart,
-      imageShiftHandler,
-      imageIndex,
       checkOut,
     } = this.props;
 
@@ -52,41 +49,37 @@ class CartDropdown extends Component {
       <CartDropDownContainer>
         <CartDropDownTitle>
           <CartDropDownTitleSpan>My Bag</CartDropDownTitleSpan>,{" "}
-          {cartItems.length} items
+          {cartItems.reduce(
+            (total, items) => (total = total + items.quantity),
+            0
+          )}{" "}
+          items
         </CartDropDownTitle>
         {cartItems.length > 0 ? (
           <Fragment>
-            {cartItems.map((item) => (
-              <CartDropDownProducts key={item.id}>
+            {cartItems.map((item, index) => (
+              <CartDropDownProducts key={index}>
                 <CartDropdownLeft>
-                  <span>{item.name}</span>
-
                   <span>
-                    <strong>
-                      {item.prices[priceSelector()].currency.symbol}
-                      {item.prices[priceSelector()].amount}
-                    </strong>
+                    {item.brand} {item.name}
                   </span>
+
+                  <CartPrice>
+                    {item.prices[priceSelector()].currency.symbol}
+                    {item.prices[priceSelector()].amount}
+                  </CartPrice>
 
                   {item.attributes.length !== 0 ? (
                     <CartDropdownButtons>
                       <SizeConfig>
                         {item.attributes.map((at) => (
                           <AttributesContainer key={at.id}>
-                            <span>{at.name}</span>
+                            <span>{at.name}:</span>
                             <SizeChoose>
                               {at.items.map((attribute) => (
                                 <AttributeButton
                                   primary={false}
                                   key={attribute.id}
-                                  onClick={() =>
-                                    updateCart(
-                                      attribute.value,
-                                      at.id,
-                                      item.id,
-                                      item
-                                    )
-                                  }
                                   attribute={
                                     attribute.value.startsWith("#")
                                       ? ""
@@ -102,13 +95,15 @@ class CartDropdown extends Component {
                                         )
                                         ? {
                                             backgroundColor: attribute.value,
-                                            width: "18px",
+                                            width: "16px",
                                             border: "2px solid #5ECE7B",
+                                            height: "16px",
                                           }
                                         : {
                                             backgroundColor: attribute.value,
-                                            width: "18px",
+                                            width: "16px",
                                             border: "0px",
+                                            height: "16px",
                                           }
                                       : item.selectedAttributes.find(
                                           (i) =>
@@ -119,10 +114,12 @@ class CartDropdown extends Component {
                                       ? {
                                           backgroundColor: "#1d1f22",
                                           color: "#ffffff",
+                                          minWidth: "24px",
                                         }
                                       : {
                                           backgroundColor: "#ffffff",
                                           width: "auto",
+                                          minWidth: "24px",
                                         }
                                   }
                                 ></AttributeButton>
@@ -149,41 +146,13 @@ class CartDropdown extends Component {
                     <AttributeButton
                       primary={false}
                       attribute="-"
-                      onClick={() => removeItemFromCart(item.id)}
+                      onClick={() =>
+                        removeItemFromCart(item.id, item.selectedAttributes)
+                      }
                     ></AttributeButton>
                   </IncrementDecrement>
                   <CartImageContainer>
-                    <CartImage
-                      src={item.gallery[imageIndex(item)]}
-                      alt={item.name}
-                    />
-                    <CartImageAttributes>
-                      <AttributeButton
-                        style={{
-                          border: "none",
-                          backgroundColor: "#000",
-                          color: "#fff",
-                          opacity: 0.7,
-                          height: "14px",
-                        }}
-                        primary={false}
-                        attribute="<"
-                        onClick={() => imageShiftHandler(item, "right")}
-                      />
-
-                      <AttributeButton
-                        style={{
-                          border: "none",
-                          backgroundColor: "#000",
-                          color: "#fff",
-                          opacity: 0.7,
-                          height: "14px",
-                        }}
-                        primary={false}
-                        attribute=">"
-                        onClick={() => imageShiftHandler(item, "left")}
-                      />
-                    </CartImageAttributes>
+                    <CartImage src={item.gallery[0]} alt={item.name} />
                   </CartImageContainer>
                 </CartDropdownRight>
               </CartDropDownProducts>
@@ -203,12 +172,11 @@ class CartDropdown extends Component {
               : parseFloat(cartTotal).toFixed(2)}
           </span>
         </CartDropdownTotal>
-        <CartDropdownButtons>
+        <CartDropdownBagButtons>
           <BagButton
             btndata="View Bag"
             onClick={() => {
               this.props.history.push("/cart");
-              isCartOpenHandler();
             }}
           />
           <BagButton
@@ -216,7 +184,7 @@ class CartDropdown extends Component {
             btndata="Check Out"
             onClick={() => checkOut()}
           />
-        </CartDropdownButtons>
+        </CartDropdownBagButtons>
       </CartDropDownContainer>
     );
   }

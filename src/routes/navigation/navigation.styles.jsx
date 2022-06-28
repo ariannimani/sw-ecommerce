@@ -12,6 +12,7 @@ export const NavContainer = styled.div`
   justify-content: space-around;
   height: 80px;
   width: 100%;
+  z-index: 1;
 `;
 
 export const NavItems = styled.ul`
@@ -57,7 +58,6 @@ export const Dropdown = styled.div`
   position: absolute;
   top: 100%;
   left: 0;
-  z-index: 2;
   border: 1px solid rgba(0, 0, 0, 0.04);
   box-shadow: 0 16px 24px 1px rgba(0, 0, 0, 0.14);
 `;
@@ -70,12 +70,13 @@ export const DropdownContent = styled.ul`
 `;
 
 export const DropdownItems = styled.li`
+  background-color: #ffffff;
   padding: 8px 12px;
   color: black;
   width: auto;
   height: 45px;
   &:hover {
-    background-color: rgba(0, 0, 0, 0.14);
+    background-color: #eeeeee;
     cursor: pointer;
   }
 `;
@@ -141,13 +142,13 @@ export const NumberItem = styled.div`
 
 export const DropdownCart = styled.div`
   position: absolute;
-  z-index: 1;
   top: 100%;
   right: 0;
   box-shadow: 0 16px 24px 1px rgba(0, 0, 0, 0.14);
   margin-right: 50px;
   width: auto;
-  max-height: 400px;
-  overflow: auto;
+  max-height: 677px;
+  overflow: auto; 
+  background-color: #ffffff;
 `;
 export const DropdownCartContent = styled.div``;

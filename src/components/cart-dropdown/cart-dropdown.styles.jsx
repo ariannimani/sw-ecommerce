@@ -6,7 +6,7 @@ export const CartDropDownContainer = styled.div`
   left: 0px;
   display: block;
   float: right;
-  max-height: auto;
+  max-height: 677px;
   min-height: 200px;
   top: 100%;
   margin-left: 10px;
@@ -14,21 +14,21 @@ export const CartDropDownContainer = styled.div`
 `;
 
 export const CartDropDownTitleSpan = styled.span`
-  font-weight: 600;
+  font-weight: 700;
 `;
 
 export const CartDropDownTitle = styled.div`
-  font-weight: 400;
+  font-weight: 500;
   margin-bottom: 40px;
+  margin-top: 20px;
 `;
 
 export const CartDropDownProducts = styled.div`
   margin-top: 10px;
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  gap: 10px;
 `;
 
 export const CartDropdownTotal = styled.div`
@@ -46,11 +46,20 @@ export const CartDropdownButtons = styled.div`
   }
 `;
 
+export const CartDropdownBagButtons = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 25px;
+  span {
+    font-size: 15px;
+  }
+`;
+
 export const CartDropdownLeft = styled.div`
   width: 121px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+
   margin-left: 10px;
 `;
 
@@ -59,11 +68,9 @@ export const CartDropdownRight = styled.div`
   height: 190px;
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: flex-start;
   gap: 5px;
   img {
-    max-width: 120px;
-    height: 121px;
     display: block;
     margin: auto;
   }
@@ -71,12 +78,12 @@ export const CartDropdownRight = styled.div`
     margin: auto;
   }
 `;
+
 export const IncrementDecrement = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 25px;
-  margin-top: -18px;
+  gap: 45px;
 `;
 
 export const EmptyCart = styled.span`
@@ -100,16 +107,17 @@ export const CartImage = styled.img`
 export const CartImageContainer = styled.div`
   position: relative;
   ${AttributeButton} {
-    bottom: 10px;
     right: 10px;
   }
 `;
 
 export const CartImageAttributes = styled.div`
-  margin-top: -25px;
   margin-left: 50px;
 `;
 
-export const AttributesContainer = styled.div`
-  margin-top: 5px;
+export const AttributesContainer = styled.div``;
+
+export const CartPrice = styled.span`
+  font-weight: 500;
+  margin-top: 10px;
 `;

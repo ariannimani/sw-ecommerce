@@ -17,6 +17,8 @@ import {
 
 class Navigation extends Component {
   container = React.createRef();
+  dropdown = React.createRef();
+
   state = {
     open: false,
   };
@@ -27,6 +29,7 @@ class Navigation extends Component {
       };
     });
   };
+
   handleClickOutside = (event) => {
     if (
       this.container.current &&
@@ -37,19 +40,34 @@ class Navigation extends Component {
       });
     }
   };
+
+  handleCartClickOutsideHandler = (event) => {
+    if (
+      this.dropdown.current &&
+      !this.dropdown.current.contains(event.target)
+    ) {
+      this.props.handleCartClickOutside();
+    }
+  };
+
   componentDidMount() {
     document.addEventListener("mousedown", this.handleClickOutside);
+    document.addEventListener("mousedown", this.handleCartClickOutsideHandler);
   }
   componentWillUnmount() {
     document.removeEventListener("mousedown", this.handleClickOutside);
+    document.removeEventListener(
+      "mousedown",
+      this.handleCartClickOutsideHandler
+    );
   }
+
   render() {
     const {
+      isCartOpen,
       categoriesData,
       selectedCurrency,
       currencyData,
-      isCartOpenHandler,
-      isCartOpen,
       selectCategoryHandler,
       changeCurrencyHandler,
       cartItems,
@@ -61,6 +79,7 @@ class Navigation extends Component {
       imageShiftHandler,
       imageIndex,
       checkOut,
+      handleCartClick,
     } = this.props;
 
     return (
@@ -81,19 +100,23 @@ class Navigation extends Component {
             <LogoSVG />
           </h3>
           <NavItems>
-            <DropdownContainer ref={this.container}>
-              <DrpBtn onClick={this.handleButtonClick}>
+            <DropdownContainer>
+              <DrpBtn onClick={() => this.handleButtonClick()}>
                 {selectedCurrency.symbol}
               </DrpBtn>
               {this.state.open && (
                 <Dropdown>
-                  <DropdownContent>
+                  <DropdownContent ref={this.container}>
                     {currencyData.map((currency) => (
                       <DropdownItems
                         key={currency.label}
-                        onClick={() =>
-                          changeCurrencyHandler(currency.label, currency.symbol)
-                        }
+                        onClick={() => {
+                          changeCurrencyHandler(
+                            currency.label,
+                            currency.symbol
+                          );
+                          this.handleButtonClick();
+                        }}
                         value={currency.label}
                       >
                         {currency.symbol} {currency.label}
@@ -103,24 +126,30 @@ class Navigation extends Component {
                 </Dropdown>
               )}
             </DropdownContainer>
+            {console.log(cartItems)}
             <Fragment>
-              <CartSVG onClick={isCartOpenHandler} />
+              <CartSVG onClick={() => handleCartClick()} />
               {cartItems.length > 0 ? (
-                <NumberItem>{cartItems.length}</NumberItem>
+                <NumberItem>
+                  {cartItems.reduce(
+                    (total, items) => (total = total + items.quantity),
+                    0
+                  )}
+                </NumberItem>
               ) : (
                 <NumberItem>0</NumberItem>
               )}
             </Fragment>
           </NavItems>
+
           {isCartOpen && (
-            <DropdownCart>
+            <DropdownCart ref={this.dropdown}>
               <CartDropdown
                 cartItems={cartItems}
                 selectedCurrency={selectedCurrency}
                 removeItemFromCart={removeItemFromCart}
                 addItemToCart={addItemToCart}
                 cartTotal={cartTotal}
-                isCartOpenHandler={isCartOpenHandler}
                 updateCart={updateCart}
                 priceSelector={priceSelector}
                 imageShiftHandler={imageShiftHandler}

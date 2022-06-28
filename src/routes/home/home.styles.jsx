@@ -6,8 +6,6 @@ export const HomeProducts = styled.div`
   gap: 20px;
 `;
 
-export const HomeContainer = styled.div`
-  margin-top: 150px;
-`;
+export const HomeContainer = styled.div``;
 
 export const CategoryTitle = styled.h1``;

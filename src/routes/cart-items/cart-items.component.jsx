@@ -47,8 +47,8 @@ export default class CartItems extends Component {
       <Fragment>
         <CartTitle>Cart</CartTitle>
         <CartWindow>
-          {cartItems.map((item) => (
-            <CartContainer key={item.id}>
+          {cartItems.map((item, index) => (
+            <CartContainer key={index}>
               <CartLeft>
                 <ItemName>{item.name}</ItemName>
                 <ItemPrice>
@@ -132,23 +132,17 @@ export default class CartItems extends Component {
                   <AttributeButton
                     primary={false}
                     attribute="+"
-                    style={{
-                      width: "32px",
-                      height: "32px",
-                      fontSize: "18px",
-                    }}
+                    cartItem={true}
                     onClick={() => addItemToCart(item, item.selectedAttributes)}
                   ></AttributeButton>
                   <span>{item.quantity}</span>
                   <AttributeButton
+                    cartItem={true}
                     primary={false}
                     attribute="-"
-                    style={{
-                      width: "32px",
-                      height: "32px",
-                      fontSize: "18px",
-                    }}
-                    onClick={() => removeItemFromCart(item.id)}
+                    onClick={() =>
+                      removeItemFromCart(item.id, item.selectedAttributes)
+                    }
                   ></AttributeButton>
                 </IncrementDecrement>
                 <CartImageContainer>
@@ -158,23 +152,13 @@ export default class CartItems extends Component {
                   />
                   <CartImageAttributes>
                     <AttributeButton
-                      style={{
-                        border: "none",
-                        backgroundColor: "#000",
-                        color: "#fff",
-                        opacity: 0.7,
-                      }}
+                      cart={true}
                       primary={false}
                       attribute="<"
                       onClick={() => imageShiftHandler(item, "right")}
                     />
                     <AttributeButton
-                      style={{
-                        border: "none",
-                        backgroundColor: "#000",
-                        color: "#fff",
-                        opacity: 0.7,
-                      }}
+                      cart={true}
                       primary={false}
                       attribute=">"
                       onClick={() => imageShiftHandler(item, "left")}

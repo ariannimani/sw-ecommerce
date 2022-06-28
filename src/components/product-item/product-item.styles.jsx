@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 
 export const CircleIcon = styled.svg`
   position: relative;
-  z-index: 1;
   background-image: none;
   margin-left: 310px;
   margin-top: -74px;
@@ -15,7 +14,6 @@ export const ProductContainer = styled.div`
   width: 386px;
   height: 444px;
   padding: 16px;
-  margin-top: 50px;
   &:hover {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
     ${CircleIcon} {
@@ -30,15 +28,13 @@ export const ProductLink = styled(Link)`
   color: #000;
 `;
 
-export const ProductImage = styled.img`
-  width: 384px;
+export const ProductImage = styled.div`
   height: 330px;
   display: block;
   margin-left: auto;
   margin-right: auto;
-  background-image: url(${(props) => props.image});
-  background-repeat: no-repeat;
-  background-size: 384px;
+  content: url(${(props) => props.image});
+  opacity: ${(props) => (props.stock ? "1" : "0.5")};
 `;
 
 export const ProductDetails = styled.div`

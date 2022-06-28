@@ -2,13 +2,14 @@ import styled from "styled-components";
 
 export const ProductDetailsContainer = styled.main`
   max-width: 1200px;
-  margin: 0 auto;
   padding: 15px;
   display: flex;
+  gap: 5px;
+  margin: 50px auto;
 `;
 
 export const LeftColumn = styled.div`
-  width: 65%;
+  width: 50%;
   display: flex;
   flex-direction: row;
 `;
@@ -18,6 +19,7 @@ export const ProductMainImage = styled.div`
   img {
     width: auto;
     height: 511px;
+    max-width: 500px;
     object-fit: contain;
     &:active {
       opacity: 1;
@@ -27,14 +29,19 @@ export const ProductMainImage = styled.div`
 
 export const ProductSideImages = styled.div`
   margin-top: 50px;
+  max-height: 500px;
+  margin-right: 5px;
   display: flex;
   flex-direction: column;
   gap: 5px;
   cursor: pointer;
+  overflow: auto;
+
   img {
     width: 80px;
     height: 80px;
     object-fit: contain;
+
     &:active {
       opacity: 1;
     }
@@ -42,7 +49,7 @@ export const ProductSideImages = styled.div`
 `;
 
 export const RightColumn = styled.div`
-  width: 35%;
+  width: 50%;
   margin-top: 80px;
 `;
 

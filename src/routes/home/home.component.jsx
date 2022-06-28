@@ -6,8 +6,13 @@ import { HomeProducts, HomeContainer, CategoryTitle } from "./home.styles.jsx";
 
 class Home extends Component {
   render() {
-    const { selectedCategory, productsData, selectedCurrency, selectedId, selectedAttributes, addItemToCart } =
-      this.props;
+    const {
+      selectedCategory,
+      selectedCurrency,
+      productsData,
+      addItemToCart,
+      isCartOpen,
+    } = this.props;
 
     function priceSelector() {
       const price = productsData.map((product) =>
@@ -22,44 +27,22 @@ class Home extends Component {
       <HomeContainer>
         <CategoryTitle>{selectedCategory.toUpperCase()}</CategoryTitle>
         <HomeProducts>
-          {selectedCategory === "all"
-            ? productsData.map((product) => (
-                <ProductItem
-                  key={product.id}
-                  productID={product.id}
-                  productName={product.name}
-                  product={product}
-                  productAttributes={product.attributes}
-                  productStock={product.inStock}
-                  productPrice={product.prices[priceSelector()]}
-                  productGallery={product.gallery[0]}
-                  productsData={productsData}
-                  selectedId={selectedId}
-                  selectedCategory={selectedCategory}
-                  selectedAttributes={selectedAttributes}
-                  addItemToCart={addItemToCart}
-                />
-                
-              ))
-            : productsData
-                .filter((product) => product.category === selectedCategory)
-                .map((product) => (
-                  <ProductItem
-                    key={product.id}
-                    productID={product.id}
-                    productName={product.name}
-                    product={product}
-                    productAttributes={product.attributes}
-                    productStock={product.inStock}
-                    productPrice={product.prices[priceSelector()]}
-                    productGallery={product.gallery[0]}
-                    productsData={productsData}
-                    selectedId={selectedId}
-                    selectedCategory={selectedCategory}
-                    selectedAttributes={selectedAttributes}
-                    addItemToCart={addItemToCart}
-                  />
-                ))}
+          {productsData.map((product) => (
+            <ProductItem
+              key={product.id}
+              productID={product.id}
+              productName={product.name}
+              productBrand={product.brand}
+              productAttributes={product.attributes}
+              product={product}
+              productStock={product.inStock}
+              productPrice={product.prices[priceSelector()]}
+              productGallery={product.gallery[0]}
+              selectedCategory={selectedCategory}
+              addItemToCart={addItemToCart}
+              isCartOpen={isCartOpen}
+            />
+          ))}
         </HomeProducts>
       </HomeContainer>
     );
