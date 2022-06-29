@@ -126,7 +126,7 @@ class Navigation extends Component {
                 </Dropdown>
               )}
             </DropdownContainer>
-            {console.log(cartItems)}
+
             <Fragment>
               <CartSVG onClick={() => handleCartClick()} />
               {cartItems.length > 0 ? (

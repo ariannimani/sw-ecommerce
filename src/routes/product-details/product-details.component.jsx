@@ -70,7 +70,6 @@ class ProductDetails extends Component {
 
     return (
       <Fragment>
-        {console.log(this.state.singleProduct)}
         {this.state.singleProduct.map((prod) => (
           <ProductDetailsContainer key={prod.name}>
             <LeftColumn>
