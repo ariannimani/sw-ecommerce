@@ -117,36 +117,23 @@ class ProductDetails extends Component {
                               primary={true}
                               style={
                                 item.type === "swatch"
-                                  ? selectedAttributes.find(
-                                      (i) =>
-                                        i.value === attribute.value &&
-                                        item.id === i.type &&
-                                        prod.id === i.id
-                                    )
-                                    ? {
-                                        backgroundColor: attribute.value,
-                                        width: "24px",
-                                        border: "2px solid #5ECE7B",
-                                      }
-                                    : {
-                                        backgroundColor: attribute.value,
-                                        width: "24px",
-                                        border: "0px",
-                                      }
-                                  : selectedAttributes.find(
-                                      (i) =>
-                                        i.value === attribute.value &&
-                                        item.id === i.type &&
-                                        prod.id === i.id
-                                    )
                                   ? {
-                                      backgroundColor: "#1d1f22",
-                                      color: "#ffffff",
+                                      backgroundColor: attribute.value,
                                     }
                                   : {
-                                      backgroundColor: "#ffffff",
-                                      width: "auto",
+                                      backgroundColor: attribute.value,
                                     }
+                              }
+                              type={item.type === "swatch" ? true : false}
+                              selected={
+                                selectedAttributes.find(
+                                  (i) =>
+                                    i.value === attribute.value &&
+                                    item.id === i.type &&
+                                    prod.id === i.id
+                                )
+                                  ? true
+                                  : false
                               }
                               key={attribute.id}
                               attribute={
