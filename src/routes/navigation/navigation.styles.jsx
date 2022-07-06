@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 export const NavContainer = styled.div`
   position: fixed;
@@ -15,6 +15,16 @@ export const NavContainer = styled.div`
   z-index: 1;
 `;
 
+export const NavItem = styled(NavLink)`
+  padding: 0 10px;
+  color: #43464e;
+  text-decoration: none;
+
+  &:active {
+    color: #5ece7b;
+    border-bottom: 1px solid #5ece7b;
+  }
+`;
 export const NavItems = styled.ul`
   position: static;
   height: 20px;
@@ -37,18 +47,14 @@ export const NavItems = styled.ul`
   flex-grow: 0;
   margin: 30px 0px;
   list-style: none;
-`;
 
-export const NavItem = styled(Link)`
-  padding: 0 10px;
-  color: #43464e;
-  text-decoration: none;
-  &:active {
+  .active {
     color: #5ece7b;
-    padding-bottom: 20px;
+    padding: 20px;
     border-bottom: 1px solid #5ece7b;
   }
 `;
+
 export const DropdownContainer = styled.div`
   position: relative;
   display: inline-block;
@@ -148,7 +154,7 @@ export const DropdownCart = styled.div`
   margin-right: 50px;
   width: auto;
   max-height: 677px;
-  overflow: auto; 
+  overflow: auto;
   background-color: #ffffff;
 `;
 export const DropdownCartContent = styled.div``;

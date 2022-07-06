@@ -155,6 +155,7 @@ class Navigation extends Component {
                 imageShiftHandler={imageShiftHandler}
                 imageIndex={imageIndex}
                 checkOut={checkOut}
+                handleCartClickOutside={this.props.handleCartClickOutside}
               />
             </DropdownCart>
           )}

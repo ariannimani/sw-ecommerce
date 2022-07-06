@@ -9,6 +9,7 @@ export const ContainerBody = styled.div`
   height: 100vh;
   width: 100%;
   margin: auto;
+  pointer-events: ${(props) => (props.isCartOpen ? "none" : "")};
   background-color: ${(props) => (props.isCartOpen ? "#39374838" : "#FFF")};
   opacity: ${(props) => (props.isCartOpen ? "0.5" : "1")};
   display: flex;

@@ -64,6 +64,7 @@ export default class CartItems extends Component {
                           {attr.items.map((attribute) => (
                             <AttributeButton
                               primary={false}
+                              cartItem={true}
                               key={attribute.id}
                               onClick={() =>
                                 updateCart(
@@ -80,42 +81,23 @@ export default class CartItems extends Component {
                               }
                               style={
                                 attr.type === "swatch"
-                                  ? item.selectedAttributes.find(
-                                      (i) =>
-                                        i.value === attribute.value &&
-                                        attr.id === i.type &&
-                                        item.id === i.id
-                                    )
-                                    ? {
-                                        backgroundColor: attribute.value,
-                                        width: "32px",
-                                        height: "32px",
-                                        border: "2px solid #5ECE7B",
-                                      }
-                                    : {
-                                        backgroundColor: attribute.value,
-                                        width: "32px",
-                                        height: "32px",
-                                        border: "0px",
-                                      }
-                                  : item.selectedAttributes.find(
-                                      (i) =>
-                                        i.value === attribute.value &&
-                                        attr.id === i.type &&
-                                        item.id === i.id
-                                    )
                                   ? {
-                                      backgroundColor: "#1d1f22",
-                                      color: "#ffffff",
-                                      width: "65px",
-                                      height: "45px",
+                                      backgroundColor: attribute.value,
                                     }
                                   : {
-                                      backgroundColor: "#ffffff",
-
-                                      width: "65px",
-                                      height: "45px",
+                                      backgroundColor: attribute.value,
                                     }
+                              }
+                              type={attr.type === "swatch" ? true : false}
+                              selected={
+                                item.selectedAttributes.find(
+                                  (i) =>
+                                    i.value === attribute.value &&
+                                    attr.id === i.type &&
+                                    item.id === i.id
+                                )
+                                  ? true
+                                  : false
                               }
                             ></AttributeButton>
                           ))}

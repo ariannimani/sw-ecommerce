@@ -34,6 +34,7 @@ class CartDropdown extends Component {
       addItemToCart,
       cartTotal,
       checkOut,
+      handleCartClickOutside,
     } = this.props;
 
     function priceSelector() {
@@ -45,6 +46,10 @@ class CartDropdown extends Component {
       return price[0];
     }
 
+    const goToCart = () => {
+      this.props.history.push("/cart");
+      handleCartClickOutside();
+    };
     return (
       <CartDropDownContainer>
         <CartDropDownTitle>
@@ -80,6 +85,7 @@ class CartDropdown extends Component {
                                 <AttributeButton
                                   primary={false}
                                   key={attribute.id}
+                                  cartDropdown={true}
                                   attribute={
                                     attribute.value.startsWith("#")
                                       ? ""
@@ -87,40 +93,23 @@ class CartDropdown extends Component {
                                   }
                                   style={
                                     at.type === "swatch"
-                                      ? item.selectedAttributes.find(
-                                          (i) =>
-                                            i.value === attribute.value &&
-                                            at.id === i.type &&
-                                            item.id === i.id
-                                        )
-                                        ? {
-                                            backgroundColor: attribute.value,
-                                            width: "16px",
-                                            border: "2px solid #5ECE7B",
-                                            height: "16px",
-                                          }
-                                        : {
-                                            backgroundColor: attribute.value,
-                                            width: "16px",
-                                            border: "0px",
-                                            height: "16px",
-                                          }
-                                      : item.selectedAttributes.find(
-                                          (i) =>
-                                            i.value === attribute.value &&
-                                            at.id === i.type &&
-                                            item.id === i.id
-                                        )
                                       ? {
-                                          backgroundColor: "#1d1f22",
-                                          color: "#ffffff",
-                                          minWidth: "24px",
+                                          backgroundColor: attribute.value,
                                         }
                                       : {
-                                          backgroundColor: "#ffffff",
-                                          width: "auto",
-                                          minWidth: "24px",
+                                          backgroundColor: attribute.value,
                                         }
+                                  }
+                                  type={at.type === "swatch" ? true : false}
+                                  selected={
+                                    item.selectedAttributes.find(
+                                      (i) =>
+                                        i.value === attribute.value &&
+                                        at.id === i.type &&
+                                        item.id === i.id
+                                    )
+                                      ? true
+                                      : false
                                   }
                                 ></AttributeButton>
                               ))}
@@ -173,12 +162,7 @@ class CartDropdown extends Component {
           </span>
         </CartDropdownTotal>
         <CartDropdownBagButtons>
-          <BagButton
-            btndata="View Bag"
-            onClick={() => {
-              this.props.history.push("/cart");
-            }}
-          />
+          <BagButton btndata="View Bag" onClick={() => goToCart()} />
           <BagButton
             buttonType={true}
             btndata="Check Out"
