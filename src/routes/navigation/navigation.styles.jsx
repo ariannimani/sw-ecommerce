@@ -19,11 +19,6 @@ export const NavItem = styled(NavLink)`
   padding: 0 10px;
   color: #43464e;
   text-decoration: none;
-
-  &:active {
-    color: #5ece7b;
-    border-bottom: 1px solid #5ece7b;
-  }
 `;
 export const NavItems = styled.ul`
   position: static;

@@ -137,11 +137,9 @@ class ProductDetails extends Component {
                               }
                               key={attribute.id}
                               attribute={
-                                attribute.value.startsWith("#")
-                                  ? ""
-                                  : attribute.value
+                                item.type === "swatch" ? "" : attribute.value
                               }
-                            ></AttributeButton>
+                            />
                           ))}
                         </SizeChoose>
                       </Fragment>
